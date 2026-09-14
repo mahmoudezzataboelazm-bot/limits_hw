@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واجب النهايات 1 - منصة مدارك</title>
+    <!-- MathJax Configuration -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$']],
+        displayMath: [['$$', '$$']]
+      }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <style>
+        :root {
+            --primary-blue: #1e3a8a;
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-dark: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            padding: 25px 15px;
+            line-height: 1.6;
+        }
+
+        .exam-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .exam-header {
+            background: var(--primary-blue);
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .exam-header h2 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .exam-body {
+            padding: 24px;
+        }
+
+        .q-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .q-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+
+        .q-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: #fafafa;
+            border-radius: 8px;
+            border: 1px solid #f1f5f9;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .opt-label {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 6px;
+            background: #f8fafc;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .opt-label:hover {
+            background: #eff6ff;
+            border-color: #93c5fd;
+        }
+
+        .opt-label input {
+            margin-left: 12px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--primary-blue);
+        }
+
+        .opt-label.correct {
+            background: #f0fdf4 !important;
+            border-color: #16a34a !important;
+            font-weight: 700;
+            color: #15803d;
+        }
+
+        .opt-label.incorrect {
+            background: #fef2f2 !important;
+            border-color: #dc2626 !important;
+            color: #991b1b;
+        }
+
+        .feedback-box {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            background: #f8fafc;
+            border-right: 4px solid var(--primary-blue);
+            font-size: 14px;
+        }
+
+        .submit-bar {
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn-submit {
+            background: var(--primary-blue);
+            color: white;
+            padding: 12px 35px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            background: #1e40af;
+        }
+
+        .score-banner {
+            display: none;
+            background: #ffffff;
+            border: 2px solid #16a34a;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .score-num {
+            font-size: 32px;
+            font-weight: bold;
+            color: #16a34a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="exam-container">
+    <div class="exam-header">
+        <h2>واجب النهايات 1</h2>
+    </div>
+
+    <div class="exam-body">
+        <div id="scoreBanner" class="score-banner">
+            <div>النتيجة:</div>
+            <div class="score-num" id="scoreValue">0 / 10</div>
+            <div id="syncStatus" style="font-size: 13px; color: #64748b; margin-top: 8px;">جاري إرسال البيانات وحفظها في ملف الطالب...</div>
+        </div>
+
+        <form id="examForm">
+
+            <!-- Q1 -->
+            <div class="q-card" id="card_q1">
+                <div class="q-title">سؤال 1</div>
+                <div class="q-text">ما المعنى الرياضي الدقيق لقولنا إن نهاية الدالة $\lim_{x \to a} f(x) = L$؟</div>
+                <div class="options-grid">
+                    <label class="opt-label"><input type="radio" name="q1" value="A"> (أ) قيمة الدالة الفعلية عند النقطة $a$ تساوي بالضرورة $L$</label>
+                    <label class="opt-label"><input type="radio" name="q1" value="B"> (ب) قيم $f(x)$ تقترب من العدد $L$ كلما اقتربت $x$ من $a$ من كلا الطرفين دون أن تساويها ($x \ne a$)</label>
+                    <label class="opt-label"><input type="radio" name="q1" value="C"> (ج) الدالة $f(x)$ يجب أن تكون معرفة ومتصلة في الفترة المفتوحة المحيطة بـ $a$</label>
+                    <label class="opt-label"><input type="radio" name="q1" value="D"> (د) ميل المماس لمنحنى الدالة عند النقطة $x = a$ يساوي العدد $L$</label>
+                </div>
+                <div class="feedback-box" id="fb_q1">
+                    <strong>الإجابة الصحيحة: (ب)</strong><br>
+                    مفهوم النهاية يبحث سلوك الدالة بالقرب من النقطة مع اشتراط أن $x \ne a$.
+                </div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="q-card" id="card_q2">
+                <div class="q-title">سؤال 2</div>
+                <div class="q-text">ما هو الشرط الضروري والكافي لوجود النهاية العامة $\lim_{x \to a} f(x) = L$؟</div>
+                <div class="options-grid">
+                    <label class="opt-label"><input type="radio" name="q2" value="A"> (أ) وجود النهايتين أحاديتي الطرف وتساويهما بحيث $\lim_{x \to a^-} f(x) = \lim_{x \to a^+} f(x) = L$</label>
+                    <label class="opt-label"><input type="radio" name="q2" value="B"> (ب) أن تكون النهاية من اليمين موجودة ومحددة بصرف النظر عن النهاية من اليسار</label>
+                    <label class="opt-label"><input type="radio" name="q2" value="C"> (ج) أن تكون قيمة الدالة $f(a)$ موجودة ومساوية للنهاية من اليسار</label>
+                    <label class="opt-label"><input type="radio" name="q2" value="D"> (د) أن تؤول الدالة إلى ما لا نهاية من كلا الاتجاهين</label>
+                </div>
+                <div class="feedback-box" id="fb_q2">
+                    <strong>الإجابة الصحيحة: (أ)</strong><br>
+                    يجب أن تتساوى النهايتان من اليمين واليسار حتى تكون النهاية العامة موجودة.
+                </div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="q-card" id="card_q3">
+                <div class="q-title">سؤال 3</div>
+                <div class="q-text">عند حساب النهاية $\lim_{x \to 2} \frac{x^2 - 4}{x - 2}$، نقوم بتحليل البسط ثم حذف المقدار $(x - 2)$. ما المبرر الرياضي السليم الذي يمنع وقوع "خطأ القسمة على صفر"؟</div>
+                <div class="options-grid">
+                    <label class="opt-label"><input type="radio" name="q3" value="A"> (أ) لأن قواعد التفاضل تسمح مؤقتاً بالقسمة على صفر</label>
+                    <label class="opt-label"><input type="radio" name="q3" value="B"> (ب) لأننا نعوض بالرقم 2 في البسط قبل حذف المقام</label>
+                    <label class="opt-label"><input type="radio" name="q3" value="C"> (ج) لأن النهاية تدرس $x \to 2$ بحيث $x \ne 2$، بالتالي المقدار $(x - 2) \ne 0$ ويجوز اختصاره</label>
+                    <label class="opt-label"><input type="radio" name="q3" value="D"> (د) لأن الدالة الكسرية معرفة على جميع الأعداد الحقيقية</label>
+                </div>
+                <div class="feedback-box" id="fb_q3">
+                    <strong>الإجابة الصحيحة: (ج)</strong><br>
+                    بما أن $x$ لا تساوي 2، فإن المقدار $(x-2)$ لا يساوي صفراً ويمكن اختصاره.
+                </div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="q-card" id="card_q4">
+                <div class="q-title">سؤال 4</div>
+                <div class="q-text">أي العبارات التالية صحيحة دائماً بخصوص دالة $f(x)$ لها نهاية موجودة وتساوي $L$ عند النقطة $x = c$؟</div>
+                <div class="options-grid">
+                    <label class="opt-label"><input type="radio" name="q4" value="A"> (أ) يجب أن تكون $f(c) = L$</label>
+                    <label class="opt-label"><input type="radio" name="q4" value="B"> (ب) قيمة النهاية $\lim_{x \to c} f(x)$ لا تعتمد على ما إذا كانت الدالة معرّفة عند $c$ أم لا</label>
+                    <label class="opt-label"><input type="radio" name="q4" value="C"> (ج) الدالة لا يمكن أن تحتوي على ثقب عند النقطة $x=c$</label>
+                    <label class="opt-label"><input type="radio" name="q4" value="D"> (د) إذا لم تكن الدالة معرفة عند $x=c$، فإن النهاية تصبح $\infty$</label>
+                </div>
+                <div class="feedback-box" id="fb_q4">
+                    <strong>الإجابة الصحيحة: (ب)</strong><br>
+                    النهاية تهتم فقط بالمسار المقترب من النقطة، والقيمة الفعلية للدالة أو عدم تعريفها لا يؤثر على قيمة النهاية.
+                </div>
+            </div>
+
+            <!-- Q5 -->
+            <div class="q-card" id="card_q5">
+                <div class="q-title">سؤال 5</div>
+                <div class="q-text">إذا أظهر جدول قيم دالة ما أنه عندما $x \to 2^-$ فإن $g(x) \to +\infty$، وعندما $x \to 2^+$ فإن $g(x) \to -\infty$، ما هو التوصيف العلمي الدقيق للنهاية العامة $\lim_{x \to 2} g(x)$؟</div>
+                <div class="options-grid">
+                    <label class="opt-label"><input type="radio" name="q5" value="A"> (أ) النهاية تساوي صفر</label>
+                    <label class="opt-label"><input type="radio" name="q5" value="B"> (ب) النهاية العامة غير موجودة بسبب تباين واختلاف السلوك غير المحدود من الجانبين</label>
+                    <label class="opt-label"><input type="radio" name="q5" value="C"> (ج) النهاية موجودة وتساوي $\pm\infty$</label>
+                    <label class="opt-label"><input type="radio" name="q5" value="D"> (د) الدالة متصلة اتصالاً لا نهائياً</label>
+                </div>
+                <div class="feedback-box" id="fb_q5">
+                    <strong>الإجابة الصحيحة: (ب)</strong><br>
+                    عندما تتجه الدالة للما لا نهاية من جهة وللسالب ما لا نهاية من الجهة الأخرى، تكون النهاية العامة غير موجودة.
+                </div>
+            </div>
+
+            <!-- Q6: Diagram 1 -->
+            <div class="q-card" id="card_q6">
+                <div class="q-title">سؤال 6</div>
+                <div class="q-text">بالاعتماد على التمثيل البياني المقابل للدالة $y = f(x)$، ما قيمة كل من: $\lim_{x \to 2} f(x)$ وقيمة $f(2)$؟</div>
+                <div class="diagram-container">
+                    <svg width="420" height="230" viewBox="0 0 420 230">
+                        <line x1="50" y1="30" x2="390" y2="30" stroke="#f1f5f9" stroke-width="1"/>
+                        <line x1="50" y1="80" x2="390" y2="80" stroke="#f1f5f9" stroke-width="1"/>
+                        <line x1="50" y1="130" x2="390" y2="130" stroke="#f1f5f9" stroke-width="1"/>
+                        <line x1="50" y1="180" x2="390" y2="180" stroke="#f1f5f9" stroke-width="1"/>
+                        <line x1="50" y1="180" x2="390" y2="180" stroke="#475569" stroke-width="2"/>
+                        <line x1="100" y1="20" x2="100" y2="200" stroke="#475569" stroke-width="2"/>
+                        <text x="395" y="185" font-size="12" fill="#475569">x</text>
+                        <text x="95" y="15" font-size="12" fill="#475569">y</text>
+                        <text x="220" y="198" font-size="12" fill="#334155" text-anchor="middle">x = 2</text>
+                        <text x="80" y="84" font-size="12" fill="#334155" text-anchor="middle">y = 4</text>
+                        <text x="80" y="134" font-size="12" fill="#334155" text-anchor="middle">y = 1</text>
+                        <line x1="220" y1="80" x2="220" y2="180" stroke="#94a3b8" stroke-dasharray="4"/>
+                        <line x1="100" y1="80" x2="220" y2="80" stroke="#94a3b8" stroke-dasharray="4"/>
+                        <line x1="100" y1="130" x2="220" y2="130" stroke="#94a3b8" stroke-dasharray="4"/>
+                        <path d="M 70 170 Q 150 100 215 82" stroke="#2563eb" stroke-width="3" fill="none"/>
+                        <path d="M 225 82 Q 290 100 370 170" stroke="#2563eb" stroke-width="3" fill="none"/>
+                        <circle cx="220" cy="80" r="6" fill="#fff" stroke="#dc2626" stroke-width="3"/>
+                        <circle cx="220" cy="130" r="6" fill="#16a34a" stroke="#16a34a" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div class="options-grid">
+                    <label class="opt-label"><input type="radio" name="q6" value="A"> (أ) $\lim_{x \to 2} f(x) = 1$ ، و $f(2) = 4$</label>
+                    <label class="opt-label"><input type="radio" name="q6" value="B"> (ب) $\lim_{x \to 2} f(x) = 4$ ، و $f(2) = 1$</label>
+                    <label class="opt-label"><input type="radio" name="q6" value="C"> (ج) النهاية غير موجودة لأن النقطة مفرغة، و $f(2) = 1$</label>
+                    <label class="opt-label"><input type="radio" name="q6" value="D"> (د) $\lim_{x \to 2} f(x) = 4$ ، و $f(2)$ غير معرفة</label>
+                </div>
+                <div class="feedback-box" id="fb_q6">
+                    <strong>الإجابة الصحيحة: (ب)</strong><br>
+                    المسار يقترب من الثقب عند $y=4$ (وهي النهاية)، بينما القيمة الفعلية للدالة يحددها مكان النقطة الممتلئة عند $y=1$.
+                </div>
+            </div>
+
+            <!-- Q7: Diagram 2 -->
+            <div class="q-card" id="card_q7">
+                <div class="q-title">سؤال 7</div>
+                <div class="q-text">يوضح الشكل المقابل دالة مجزأة المجال ذات انقطاع قفزي عند $x = 1$. أوجد قيمة $\lim_{x \to 1^+} f(x)$ و $\lim_{x \to 1} f(x)$:</div>
+                <div class="diagram-container">
+                    <svg width="420" height="210" viewBox="0 0 420 210">
+                        <line x1="40" y1="120" x2="380" y2="120" stroke="#475569" stroke-width="2"/> 
+                        <line x1="180" y1="20" x2="180" y2="190" stroke="#475569" stroke-width="2"/> 
+                        <text x="385" y="125" font-size="12" fill="#475569">x</text>
+                        <text x="175" y="15" font-size="12" fill="#475569">y</text>
+                        <text x="260" y="138" font-size="12" fill="#334155" text-anchor="middle">x = 1</text>
+                        <text x="160" y="65" font-size="12" fill="#334155" text-anchor="middle">2</text>
+                        <text x="160" y="175" font-size="12" fill="#334155" text-anchor="middle">-1</text>
+                        <line x1="260" y1="60" x2="260" y2="170" stroke="#cbd5e1" stroke-dasharray="3"/>
+                        <path d="M 60 100 L 254 62" stroke="#2563eb" stroke-width="3"/>
+                        <circle cx="260" cy="60" r="5" fill="#fff" stroke="#2563eb" stroke-width="2.5"/>
+                        <path d="M 266 170 L 370 170" stroke="#2563eb" stroke-width="3"/>
+                        <circle cx="260" cy="170" r="5" fill="#2563eb"/>
+                    </svg>
+                </div>
+                <div class="options-grid">
+                    <label class="opt-label"><input type="radio" name="q7" value="A"> (أ) النهاية من اليمين تساوي $2$، والنهاية الكلية تساوي $2$</label>
+                    <label class="opt-label"><input type="radio" name="q7" value="B"> (ب) النهاية من اليمين تساوي $-1$، والنهاية العامة غير موجودة (DNE)</label>
+                    <label class="opt-label"><input type="radio" name="q7" value="C"> (ج) النهاية من اليمين تساوي $2$، والنهاية العامة تساوي $-1$</label>
+                    <label class="opt-label"><input type="radio" name="q7" value="D"> (د) كلا النهايتين غير موجودتين</label>
+                </div>
+                <div class="feedback-box" id="fb_q7">
+                    <strong>الإجابة الصحيحة: (ب)</strong><br>
+                    من جهة اليمين ($x > 1$) المسار يقع عند $y = -1$. أما من اليسار فالمسار عند $y = 2$. لاختلاف الطرفين تكون النهاية العامة غير موجودة.
+                </div>
+            </div>
+
+            <!-- Q8: Diagram 3 -->
+            <div class="q-card" id="card_q8">
+                <div class="q-title">سؤال 8</div>
+                <div class="q-text">
+                    في الشكل البياني التالي، تم تمثيل دالة تقترب من خط تقارب رأسي (Asymptote) عند $x = 3$. 
+                    لاحظ بوضوح أن مسار الدالة من الجهة اليمنى للخط يصعد للأعلى بلا توقف (نحو $+\infty$)، بينما مسار الدالة من الجهة اليسرى للخط يهبط للأسفل بلا توقف (نحو $-\infty$). بناءً على هذا السلوك، ما هو الاستنتاج الصحيح حول النهاية $\lim_{x \to 3} f(x)$؟
+                </div>
+                <div class="diagram-container">
+                    <svg width="420" height="220" viewBox="0 0 420 220">
+                        <line x1="30" y1="110" x2="390" y2="110" stroke="#475569" stroke-width="1.5"/>
+                        <line x1="120" y1="20" x2="120" y2="200" stroke="#475569" stroke-width="1.5"/>
+                        <text x="395" y="115" font-size="12" fill="#475569">x</text>
+                        <!-- Vertical Asymptote at x = 3 -->
+                        <line x1="260" y1="20" x2="260" y2="200" stroke="#ef4444" stroke-width="2" stroke-dasharray="5"/>
+                        <text x="260" y="215" font-size="12" fill="#ef4444" text-anchor="middle">x = 3</text>
+                        <!-- Left branch going to -infinity -->
+                        <path d="M 140 100 Q 230 110 252 200" stroke="#2563eb" stroke-width="2.5" fill="none"/>
+                        <!-- Right branch going to +infinity -->
+                        <path d="M 268 20 Q 285 105 380 108" stroke="#2563eb" stroke-width="2.5" fill="none"/>
+                        <polygon points="252,200 248,190 256,190" fill="#2563eb"/>
+                        <polygon points="268,20 264,30 272,30" fill="#2563eb"/>
+                    </svg>
+                </div>
+                <div class="options-grid">
+                    <label class="opt-label"><input type="radio" name="q8" value="A"> (أ) النهاية العامة غير موجودة لأن سلوك المنحنى يتجه للما لا نهاية باتجاهين متعاكسين</label>
+                    <label class="opt-label"><input type="radio" name="q8" value="B"> (ب) النهاية العامة تساوي صفر لأن المنحنى يمر عبر محور السينات</label>
+                    <label class="opt-label"><input type="radio" name="q8" value="C"> (ج) النهاية العامة موجودة وتساوي $+\infty$</label>
+                    <label class="opt-label"><input type="radio" name="q8" value="D"> (د) النهاية العامة موجودة وتساوي $-\infty$</label>
+                </div>
+                <div class="feedback-box" id="fb_q8">
+                    <strong>الإجابة الصحيحة: (أ)</strong><br>
+                    نظراً لأن الطرف الأيمن يصعد للأعلى ($+\infty$) والطرف الأيسر يهبط للأسفل ($-\infty$)، فلا يوجد اتفاق بين الطرفين، وبالتالي النهاية غير موجودة قطعاً.
+                </div>
+            </div>
+
+            <!-- Q9 -->
+            <div class="q-card" id="card_q9">
+                <div class="q-title">سؤال 9</div>
+                <div class="q-text">ما قيمة النهاية الجبرية التالية: $\lim_{x \to 3} \frac{x^2 - 9}{x - 3}$؟</div>
+                <div class="options-grid">
+                    <label class="opt-label"><input type="radio" name="q9" value="A"> (أ) 0</label>
+                    <label class="opt-label"><input type="radio" name="q9" value="B"> (ب) 6</label>
+                    <label class="opt-label"><input type="radio" name="q9" value="C"> (ج) 3</label>
+                    <label class="opt-label"><input type="radio" name="q9" value="D"> (د) غير موجودة</label>
+                </div>
+                <div class="feedback-box" id="fb_q9">
+                    <strong>الإجابة الصحيحة: (ب)</strong><br>
+                    بالتعويض المباشر نحصل على $\frac{0}{0}$. نقوم بتحليل البسط لفرق بين مربعين $(x-3)(x+3)$. نختصر $(x-3)$ يتبقى لدينا $\lim_{x \to 3} (x+3) = 3+3 = 6$.
+                </div>
+            </div>
+            
+            <!-- Q10 -->
+            <div class="q-card" id="card_q10">
+                <div class="q-title">سؤال 10</div>
+                <div class="q-text">بناءً على تعريف القيمة المطلقة، ما قيمة النهاية $\lim_{x \to 0} \frac{x}{|x|}$؟</div>
+                <div class="options-grid">
+                    <label class="opt-label"><input type="radio" name="q10" value="A"> (أ) 1</label>
+                    <label class="opt-label"><input type="radio" name="q10" value="B"> (ب) -1</label>
+                    <label class="opt-label"><input type="radio" name="q10" value="C"> (ج) 0</label>
+                    <label class="opt-label"><input type="radio" name="q10" value="D"> (د) غير موجودة لأن النهاية من اليمين تختلف عن النهاية من اليسار</label>
+                </div>
+                <div class="feedback-box" id="fb_q10">
+                    <strong>الإجابة الصحيحة: (د)</strong><br>
+                    من جهة اليمين الأعداد موجبة فيكون الناتج $\frac{x}{x}=1$. من جهة اليسار الأعداد سالبة فيكون الناتج $\frac{x}{-x}=-1$. بما أن الطرفين مختلفان، فالنهاية غير موجودة.
+                </div>
+            </div>
+
+            <div class="submit-bar">
+                <button type="button" class="btn-submit" onclick="gradeExam()">تصحيح الواجب وعرض النتيجة وحفظها</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // حساب الزمن المستغرق منذ فتح الصفحة
+    const startTime = new Date();
+
+    const answerKeys = {
+        q1: 'B',
+        q2: 'A',
+        q3: 'C',
+        q4: 'B',
+        q5: 'B',
+        q6: 'B',
+        q7: 'B',
+        q8: 'A',
+        q9: 'B',
+        q10: 'D'
+    };
+
+    function gradeExam() {
+        let currentScore = 0;
+        const totalItems = Object.keys(answerKeys).length;
+        let examDetails = [];
+
+        for (let idx = 1; idx <= totalItems; idx++) {
+            const keyName = 'q' + idx;
+            const itemOptions = document.getElementsByName(keyName);
+            let userSelected = 'لم يجب';
+            let chosenElement = null;
+
+            for (let opt of itemOptions) {
+                const parentBox = opt.parentElement;
+                parentBox.classList.remove('correct', 'incorrect');
+
+                if (opt.checked) {
+                    userSelected = opt.value;
+                    chosenElement = parentBox;
+                }
+
+                if (opt.value === answerKeys[keyName]) {
+                    parentBox.classList.add('correct');
+                }
+            }
+
+            let isCorrect = (userSelected === answerKeys[keyName]);
+            if (isCorrect) {
+                currentScore++;
+            } else if (chosenElement) {
+                chosenElement.classList.add('incorrect');
+            }
+
+            // تجميع تفاصيل السؤال للتحليل والاحتفاظ بالأخطاء
+            examDetails.push({
+                questionNumber: idx,
+                studentAnswer: userSelected,
+                correctAnswer: answerKeys[keyName],
+                isCorrect: isCorrect
+            });
+
+            document.getElementById('fb_' + keyName).style.display = 'block';
+        }
+
+        // إظهار النتيجة في الواجهة
+        const banner = document.getElementById('scoreBanner');
+        banner.style.display = 'block';
+        document.getElementById('scoreValue').innerText = currentScore + ' / ' + totalItems;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // حساب الزمن المستغرق بالدقائق والثواني
+        const endTime = new Date();
+        const diffSeconds = Math.floor((endTime - startTime) / 1000);
+        const mins = Math.floor(diffSeconds / 60);
+        const secs = diffSeconds % 60;
+        const timeSpentFormatted = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+
+        // تجهيز حمولة البيانات (Payload) لإرسالها للسكريبت المركزي
+        const payload = {
+            studentName: "محمد إيهاب",
+            subjectName: "رياضيات",
+            moduleName: "التفاضل والتكامل",
+            assessmentType: "واجب",
+            lessonName: "واجب النهايات 1",
+            timeSpent: timeSpentFormatted,
+            score: currentScore,
+            total: totalItems,
+            details: examDetails
+        };
+
+        // رابط الـ Web App الخاص بك الذي قمت بنسخه مسبقاً
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzPiLSWT7JgQzmK9Efl2eKGabIePRYRAwlPsLL8BjUWuWSJz75XY6ovHyO-I15YexUZ/exec';
+
+        // إرسال البيانات أوتوماتيكياً لجوجل شيت عبر الـ API
+        fetch(scriptURL, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        })
+        .then(response => response.text())
+        .then(result => {
+            console.log('Success:', result);
+            document.getElementById('syncStatus').innerText = 'تم حفظ درجات وتفاصيل أخطاء محمد إيهاب في ملفه بنجاح! ✔️';
+            document.getElementById('syncStatus').style.color = '#16a34a';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('syncStatus').innerText = 'حدث خطأ أثناء مزامنة البيانات، يرجى التحقق من الاتصال.';
+            document.getElementById('syncStatus').style.color = '#dc2626';
+        });
+    }
+</script>
+
+</body>
+</html>
